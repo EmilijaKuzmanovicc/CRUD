@@ -1,11 +1,11 @@
-import { Platform, StyleSheet } from "react-native"
+import { Platform, StyleSheet } from "react-native";
 const value = Platform.OS === "web" ? 1.4 : 1;
 
 function createIndexStyles(theme) {
     return StyleSheet.create({
         input: {
             fontFamily: 'Inter_500Medium',
-            width: "77%",
+            flex: 1,
             height: 40 * value,
             margin: 4,
             borderWidth: 1,
@@ -26,6 +26,9 @@ function createIndexStyles(theme) {
             alignItems: "center",
             borderRadius: 6
         },
+        buttonIcon: {
+            marginLeft: 4,
+        },
         text: {
             fontSize: value * 16,
             color: theme.text,
@@ -34,7 +37,7 @@ function createIndexStyles(theme) {
             marginTop: 16,
             width: "90%",
             flexDirection: "row",
-            justifyContent: "center",
+            justifyContent: "space-between",
             alignItems: "center",
             textAlign: "center"
         },
@@ -49,13 +52,13 @@ function createIndexStyles(theme) {
         separator: {
             height: 1,
             backgroundColor: theme.text,
-            width: "95%",
+            width: "100%",
             alignSelf: "center",
             marginBottom: 10,
             marginTop: 10
         },
         todoRow: {
-            width: "95%",
+
             margin: 6,
             flexDirection: "row",
             justifyContent: "space-between",
@@ -66,7 +69,18 @@ function createIndexStyles(theme) {
             fontFamily: 'Inter_500Medium',
             marginTop: 10,
             marginBottom: 10,
-            width: "95%",
+            justifyContent: "center",
+            flexDirection: "column",
+            paddingBottom: 10
+        },
+        body: {
+            flex: 1,
+            fontFamily: 'Inter_500Medium',
+            margin: 10,
+            width: "90%",
+            flexDirection: "column",
+            textAlign: "center",
+            justifyContent: "center",
         },
         taskText: {
             fontSize: 20 * value,
@@ -77,6 +91,7 @@ function createIndexStyles(theme) {
             backgroundColor: theme.white
         },
         iconBack: {
+            marginLeft: 20,
             backgroundColor: "rgba(222, 71, 71, 1)",
             height: 40,
             width: 40,
@@ -88,6 +103,17 @@ function createIndexStyles(theme) {
         completedText: {
             textDecorationLine: "line-through",
             color: theme.textCross
+        },
+        buttonText: {
+            margin: 12,
+            width: 100 * value,
+            height: 40 * value,
+            fontSize: value * 20,
+            backgroundColor: theme.button,
+            color: theme.text,
+            justifyContent: "center",
+            alignItems: "center",
+            borderRadius: 6
         }
     })
 }
