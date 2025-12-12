@@ -1,11 +1,12 @@
 import { ThemeContext } from "@/context/ThemeContext";
 import { Inter_500Medium, useFonts } from "@expo-google-fonts/inter";
-import Octicons from "@expo/vector-icons/Octicons";
 import AsyncStorage from "@react-native-async-storage/async-storage";
 import { useLocalSearchParams, useRouter } from "expo-router";
 import { useContext, useEffect, useState } from "react";
-import { Pressable, StatusBar, Text, TextInput, View } from "react-native";
+import { StatusBar, TextInput, View } from "react-native";
 import { SafeAreaView } from "react-native-safe-area-context";
+import ButtonIcon from "../components/button/ButtonIcon";
+import ButtonText from "../components/button/ButtonText";
 import createIndexStyles from "../style";
 
 export default function EditScreen() {
@@ -54,20 +55,14 @@ export default function EditScreen() {
     }
   };
   return (
-    <SafeAreaView style={indexStyles.background}>
+    <SafeAreaView style={indexStyles.background} importantForAccessibility="auto">
       <View style={indexStyles.header}>
         <TextInput style={indexStyles.input} placeholder="Edit todo" maxLength={30} placeholderTextColor={theme.text} value={todo?.title || ""} onChangeText={(text) => setTodo((prev) => ({ ...prev, title: text }))} />
-        <Pressable onPress={() => setColorScheme(colorScheme === "light" ? "dark" : "light")} style={{ marginRight: 10, marginLeft: 10 }}>
-          {colorScheme === "dark" ? <Octicons name="moon" size={36} color={theme.text} selectable={undefined} style={{ width: 36 }} /> : <Octicons name="sun" size={36} color={theme.text} selectable={undefined} style={{ width: 36 }} />}
-        </Pressable>
+        <ButtonIcon onClick={() => setColorScheme(colorScheme === "light" ? "dark" : "light")} colorScheme={colorScheme} theme={theme} firstIcon="moon" secondIcon="sun" size={36} />
       </View>
       <View style={{ flexDirection: "row", marginTop: 20 }}>
-        <Pressable onPress={handleSave} style={[indexStyles.buttonText]}>
-          <Text style={[indexStyles.text]}>Save</Text>
-        </Pressable>
-        <Pressable onPress={() => router.push("/")} style={[indexStyles.buttonText, { backgroundColor: "red" }]}>
-          <Text style={indexStyles.text}>Cancel</Text>
-        </Pressable>
+        <ButtonText onClick={handleSave} theme={theme} text="Save" style={{ width: 120 }} />
+        <ButtonText onClick={() => router.push("/")} theme={theme} text="Cancel" style={{ backgroundColor: "red", width: 120 }} />
       </View>
       <StatusBar style={colorScheme === "dark" ? "light" : "dark"} />
     </SafeAreaView>

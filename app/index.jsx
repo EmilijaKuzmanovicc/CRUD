@@ -1,20 +1,21 @@
 import { ThemeContext } from "@/context/ThemeContext.js";
 import { Inter_500Medium, useFonts } from "@expo-google-fonts/inter";
-import FontAwesome from "@expo/vector-icons/FontAwesome";
-import Octicons from "@expo/vector-icons/Octicons";
 import AsyncStorage from "@react-native-async-storage/async-storage";
 import { useRouter } from "expo-router";
 import React, { useContext, useEffect, useState } from "react";
-import { Pressable, StatusBar, Text, TextInput, View } from "react-native";
+import { StatusBar, Text, TextInput, View } from "react-native";
 import Animated, { LinearTransition } from "react-native-reanimated";
 import { SafeAreaView } from "react-native-safe-area-context";
 import data from "../data/todo.js";
+import ButtonIcon from "./components/button/ButtonIcon.jsx";
+import ButtonText from "./components/button/ButtonText.jsx";
+import TodoItem from "./components/todoItem/TodoItem.jsx";
 import createIndexStyles from "./style.js";
+
 export default function Index() {
   const [text, setText] = React.useState("Add a new todo");
   const [todos, setTodos] = useState([]);
   const { colorScheme, setColorScheme, theme } = useContext(ThemeContext);
-
   const indexStyles = createIndexStyles(theme);
   const separationCont = <View style={indexStyles.separator} />;
   const [loaded, error] = useFonts({
@@ -27,18 +28,12 @@ export default function Index() {
       const jsonValue = await AsyncStorage.getItem("TodoApp");
       const storageTodos = jsonValue != null ? JSON.parse(jsonValue) : null;
 
-      if (storageTodos && storageTodos.length) {
-        setTodos(storageTodos.sort((a, b) => b.id - a.id));
-      } else {
-        setTodos(data.sort((a, b) => b.id - a.id));
-      }
+      if (storageTodos && storageTodos.length) setTodos(storageTodos.sort((a, b) => b.id - a.id));
+      else setTodos(data.sort((a, b) => b.id - a.id));
     } catch (e) {
       console.error(e);
     }
   };
-  useEffect(() => {
-    fetchData();
-  }, [data]);
 
   const storeTosos = async () => {
     try {
@@ -48,6 +43,11 @@ export default function Index() {
       console.error(e);
     }
   };
+
+  useEffect(() => {
+    fetchData();
+  }, [data]);
+
   useEffect(() => {
     storeTosos();
   }, [todos]);
@@ -91,39 +91,26 @@ export default function Index() {
   };
 
   return (
-    <SafeAreaView style={indexStyles.background}>
+    <SafeAreaView style={indexStyles.background} importantForAccessibility="auto">
       <View style={indexStyles.background}>
         <View style={indexStyles.header}>
           <TextInput style={indexStyles.input} onChangeText={setText} value={text} placeholderTextColor={theme.text} maxLength={30} />
-          <View style={indexStyles.todoRow}>
-            <Pressable onPress={() => addTodo()} style={indexStyles.button}>
-              <Text style={indexStyles.text}>Add</Text>
-            </Pressable>
-            <Pressable onPress={() => setColorScheme(colorScheme === "light" ? "dark" : "light")}>
-              {colorScheme === "dark" ? <Octicons name="moon" size={40} color={theme.text} selectable={undefined} style={indexStyles.buttonIcon} /> : <Octicons name="sun" size={40} color={theme.text} selectable={undefined} style={indexStyles.buttonIcon} />}
-            </Pressable>
+          <View style={indexStyles.inRow}>
+            <ButtonText onClick={() => addTodo()} theme={theme} text="Add" />
+            <ButtonIcon onClick={() => setColorScheme(colorScheme === "light" ? "dark" : "light")} colorScheme={colorScheme} theme={theme} firstIcon="moon" secondIcon="sun" size={36} />
           </View>
         </View>
         <View style={indexStyles.body}>
           <Animated.FlatList
             data={todos}
-            keyExtractor={(item) => item.id.toString()}
+            keyExtractor={(item, index) => (item.id != null ? item.id.toString() : index.toString())}
             showsVerticalScrollIndicator={false}
             ListEmptyComponent={<Text style={indexStyles.taskText}>No items</Text>}
             contentContainerStyle={indexStyles.contentContainer}
             ItemSeparatorComponent={separationCont}
             itemLayoutAnimation={LinearTransition}
             keyboardDismissMode="on-drag"
-            renderItem={({ item }) => (
-              <View style={indexStyles.todoRow}>
-                <Pressable onLongPress={() => toggleTodo(item.id)} onPress={() => handlePress(item.id)}>
-                  <Text style={[indexStyles.taskText, item.completed && indexStyles.completedText]}>{item.title}</Text>
-                </Pressable>
-                <Pressable style={indexStyles.iconBack} onPress={() => removeTodo(item.id)}>
-                  <FontAwesome name="trash-o" size={24} color={theme.text} />
-                </Pressable>
-              </View>
-            )}
+            renderItem={({ item }) => <TodoItem item={item} onLongPress={() => toggleTodo(item.id)} onPress={() => handlePress(item.id)} onRemove={() => removeTodo(item.id)} theme={theme} />}
           />
         </View>
       </View>
